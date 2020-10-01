@@ -13,7 +13,7 @@ library(rgdal)
 library(leaflet)
 library(plotrix)
 library(treemapify)
-library(rsconnect)
+library(plotly)
 
 #Load the csv files
 all_forests <- read_csv("Data/CSVs/all_forests.csv")
@@ -50,7 +50,7 @@ all_forests$label<-paste(all_forests$variable, round(all_forests$value, 1), sep 
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("North Country Wild Zooniverse Project"),
+  titlePanel("North Country Wild Project"),
   tabsetPanel(
     #Map of Study Sites
     tabPanel("Map of Study Sites", fluid = TRUE,
@@ -60,6 +60,7 @@ ui <- fluidPage(
                                                     "Black Bear",
                                                     "Bobcat",
                                                     "Chipmunk",
+                                                    "Cottontail Rabbit",
                                                     "Coyote",
                                                     "Fisher",
                                                     "Flying Squirrel",
@@ -78,10 +79,16 @@ ui <- fluidPage(
                                                     "White-tailed Deer"),
                                         selected = "All Mammals"),
                             
-                            img(src = "NatureUpNorth.png", height = 100, width = 240)
+                            img(src = "NatureUpNorth.png", height = 100, width = 240),
+                            h6("Created by Kate Andy, 2020")
                ),
-               mainPanel(h5("Use the map below to explore the state forests we sampled for this study. 
-                            Select the mammal you want to learn about and pan over the forests
+               
+               mainPanel(h4("Welcome to the North Country Wild Project! The goal of this project is to 
+               show you what mammals are out there in St. Lawrence County. A the top of this page are tabs you 
+               can click on that will bring up a different interactive graphic. Let's get exploring!"),
+              
+              h5("Use the map below to explore the state forests we sampled for this study in 2019. 
+                            Select the mammal you want to learn about on the left and pan over the forests
                             (outlined in red) to see how many detections we were able to get."),
                  leafletOutput("speciesmap"))   
              )
@@ -103,6 +110,7 @@ ui <- fluidPage(
                                                               "Black Bear",
                                                               "Bobcat",
                                                               "Chipmunk",
+                                                              "Cottontail Rabbit",
                                                               "Coyote",
                                                               "Fisher",
                                                               "Flying Squirrel",
@@ -124,8 +132,54 @@ ui <- fluidPage(
                             img(src = "NatureUpNorth.png", height = 100, width = 240)
                ),
                mainPanel(h5("This graph displays the number of detections per species per study site.
-               Select the forest and which mammals you want to learn about and see the number of detections."),
-                         plotOutput(outputId = "foresthist"))   
+               Select the forest and which mammals you want to learn about on the left and pan over 
+                            the bars on the graph to see the number of detections."),
+                         plotlyOutput(outputId = "foresthist"))   
+             )
+    ),
+    #Number of Detections per Species per Forest Tab #2
+    tabPanel("Species Detections per Forest", fluid = TRUE,
+             sidebarLayout(
+               sidebarPanel(selectInput("spec", h3("Choose your Species"),
+                                        choices = c("All Mammals",
+                                                    "Black Bear",
+                                                    "Bobcat",
+                                                    "Chipmunk",
+                                                    "Cottontail Rabbit",
+                                                    "Coyote",
+                                                    "Fisher",
+                                                    "Flying Squirrel",
+                                                    "Gray Squirrel",
+                                                    "Mink",
+                                                    "Opossum",
+                                                    "Other Small Mammal",
+                                                    "Porcupine",
+                                                    "Raccoon",
+                                                    "Red Fox",
+                                                    "Red Squirrel",
+                                                    "River Otter",
+                                                    "Snowshoe Hare",
+                                                    "Striped Skunk",
+                                                    "Weasel",
+                                                    "White-tailed Deer"),
+                                        selected = "Black Bear"),
+                            checkboxGroupInput("forests",
+                                               h3("Choose your Forest"),
+                                               choices = list("South Hammond", 
+                                                              "Donnerville", 
+                                                              "Beaver Creek", 
+                                                              "Whippoorwill Corners", 
+                                                              "Whiskey Flats", 
+                                                              "Degrasse"), selected = "South Hammond"),
+                                                
+                            
+                            img(src = "NatureUpNorth.png", height = 100, width = 240)
+               ),
+               mainPanel(h5("This graph is another way to represent the number of species
+               detections per study site. On the panel to the left, first select the species you want to learn about using the 
+               menu and then select your forest(s) by clicking the checkboxes. Pan over 
+                            the bars on the graph to see the number of detections per forest."),
+                         plotlyOutput(outputId = "speciesdetect"))   
              )
     ),
     #Mammal Activity Patterns 
@@ -133,35 +187,37 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(selectInput("mammals", h3("Choose your Species"),
                                         choices = c("Black Bear",
-                                                              "Bobcat",
-                                                              "Chipmunk",
-                                                              "Coyote",
-                                                              "Fisher",
-                                                              "Flying Squirrel",
-                                                              "Gray Squirrel",
-                                                              "Mink",
-                                                              "Opossum",
-                                                              "Other Small Mammal",
-                                                              "Porcupine",
-                                                              "Raccoon",
-                                                              "Red Fox",
-                                                              "Red Squirrel",
-                                                              "River Otter",
-                                                              "Snowshoe Hare",
-                                                              "Striped Skunk",
-                                                              "Weasel",
-                                                              "White-tailed Deer"),
-                                               selected = "Black Bear"),
+                                                    "Bobcat",
+                                                    "Chipmunk",
+                                                    "Cottontail Rabbit",
+                                                    "Coyote",
+                                                    "Fisher",
+                                                    "Flying Squirrel",
+                                                    "Gray Squirrel",
+                                                    "Opossum",
+                                                    "Other Small Mammal",
+                                                    "Porcupine",
+                                                    "Raccoon",
+                                                    "Red Fox",
+                                                    "Red Squirrel",
+                                                    "Weasel",
+                                                    "White-tailed Deer"),
+                                        selected = "Black Bear"),
+                            
+                            checkboxInput("rare", "Species Detected Infrequently", value = FALSE),
+                            
                             
                             img(src = "NatureUpNorth.png", height = 100, width = 240)
                ),
-               mainPanel(h5("Mammals are not all active at the same time! Select a mammal using the tab in the 
-               panel to the left and learn what times of day that mammal was detected by our cameras.
-               The graph is shaped like a clock with 0-23 symbolizing the hour we detected the mammal.
-               The x-axis lets you know how many detections we had during that hour."),
-                 plotOutput(outputId = "activity"))   
+               mainPanel(h5("Mammals are not all active at the same time! Select a mammal using the tab on the
+               left and learn when mammals were detected by our cameras. The graph is shaped like a clock with 
+               0-23 symbolizing the hour we detected the mammal.The x-axis lets you know how many detections we
+                            had during that hour. There were four mammals that were rarely detected by our cameras.
+                            Click on the checkbox to find out who they are!"),
+                         plotOutput(outputId = "activity"), uiOutput(outputId = "image"))   
              )
     ),
+  
     #Species Trophic Level
     tabPanel("Species Trophic Level", fluid = TRUE,
              sidebarLayout(
@@ -177,9 +233,11 @@ ui <- fluidPage(
                             
                             img(src = "NatureUpNorth.png", height = 100, width = 240)
                ),
-               mainPanel(h5("This graph displays the dietary preferences of the mammals detected at each 
-                            study site. Select the forest using the tab in the panel to the left and compare graphs."),
-                         plotOutput(outputId = "trophic"))   
+               mainPanel(h5("For this graph, we grouped species according to their dietary preference. 
+               Herbivores eat primarily plants, mesocarivores are medium-sized mammals with meat-eating diets,
+               omnivores eat a variety of foods, and carnivores eat primarily meat. 
+                            Select the forest using the tab in the panel to the left and compare graphs."),
+                         plotlyOutput(outputId = "trophic"))   
              )
     ),
     #Forest Composition
@@ -197,8 +255,9 @@ ui <- fluidPage(
                             
                             img(src = "NatureUpNorth.png", height = 100, width = 240)
                ),
-               mainPanel(h5("The graphic below shows the forest composition of each study site. Choose 
-                            a forest using the tab in the panel to the left and compare results. If you 
+               mainPanel(h5("The graphic below shows the forest composition of each study site. Forests are not
+               homogeneous. Even a forest composed of mostly deciduous trees has other subhabitats present. Choose 
+                            a forest using the tab in the panel to the left to see how forests vary. If you 
                             select 'All Forests' the graphic will show an average across all forests." ),
                          plotOutput(outputId = "covariates"))   
              )
@@ -219,9 +278,11 @@ ui <- fluidPage(
                             img(src = "NatureUpNorth.png", height = 100, width = 240)
                ),
                mainPanel(h5("This graph displays three different diversity indices calculated per study site.
-               The three measures of diversity include: Shannon Index, Inverse Simpson Index, and Species Richness. 
-                            Select the forest using the tab in the panel to the left and compare graphs."),
-                         plotOutput(outputId = "diversity"))   
+              Shannon and Simpson Indices measure diversity by accounting for species abundance and evenness.
+              Species Richness is the total number of species detected.
+                            Select the forest using the tab in the panel to the left and learn how species
+                            diversity vary per forest."),
+                         plotlyOutput(outputId = "diversity"))   
              )
     )
     
@@ -264,6 +325,7 @@ server <- function(input, output){
       data<-switch(input$species, 
                    "White-tailed Deer" = dat_sum %>% filter(choice == "DEERWHITETAILED"),
                    "Chipmunk" = dat_sum %>% filter(choice == "CHIPMUNK"),
+                   "Cottontail Rabbit" = dat_sum %>% filter(choice == "COTTONTAILRABBIT"),
                    "Coyote" = dat_sum %>% filter(choice == "COYOTE"),
                    "Fisher" = dat_sum %>% filter(choice == "FISHER"),
                    "Raccoon" = dat_sum %>% filter(choice == "RACCOON"),
@@ -310,7 +372,7 @@ server <- function(input, output){
   
   
   #Number of Detections per Species per Forest
-  output$foresthist <- renderPlot({
+  output$foresthist <- renderPlotly({
     
      if("All Mammals" %in% input$animals){
                              choices<-c(unique(newData$Species))
@@ -324,7 +386,7 @@ server <- function(input, output){
                                                     "Whiskey Flats" = data %>% filter(Forest == "Whiskey Flats"),
                                                     "Degrasse" = data %>% filter(Forest == "Degrasse"))
                              )
-                             ggplot(study(), aes(Species)) +
+                             p<- ggplot(study(), aes(Species)) +
                                geom_histogram(stat = "count", position = "dodge", fill = '#165970', colour = '#543b1f') +
                                theme_bw() +
                                xlab("Species") +
@@ -332,6 +394,7 @@ server <- function(input, output){
                                theme(axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5)) + 
                                labs(title = "Number of Detections per Species") +
                              theme(plot.title = element_text(hjust=0.5))
+                             ggplotly(p) %>% config(displayModeBar = F)
                              
                            }
                            else{
@@ -346,7 +409,7 @@ server <- function(input, output){
                                                     "Whiskey Flats" = data %>% filter(Forest == "Whiskey Flats"),
                                                     "Degrasse" = data %>% filter(Forest == "Degrasse"))
                              )
-                             ggplot(study(), aes(Species)) +
+                             p<-ggplot(study(), aes(Species)) +
                                geom_histogram(stat = "count", position = "dodge", fill = '#165970', colour = '#543b1f') +
                                theme_bw() +
                                xlab("Species") +
@@ -354,45 +417,159 @@ server <- function(input, output){
                                theme(axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5)) +
                                labs(title = "Number of Detections per Species") +
                              theme(plot.title = element_text(hjust=0.5))
+                             ggplotly(p) %>% config(displayModeBar = F)
                              
                            }
     })
+  #Number of Detections per Species per Forest part #2
+  output$speciesdetect <- renderPlotly({
+   
+      choices<-c(input$forests)
+      data<-newData %>% filter(Forest %in% choices)
+      study<-reactive(switch(input$spec,
+                             "All Mammals" = data,
+                             "White-tailed Deer" = data %>% filter(Species == "White-tailed Deer"),
+                             "Chipmunk" = data %>% filter(Species == "Chipmunk"),
+                             "Cottontail Rabbit" = data %>% filter(Species == "Cottontail Rabbit"),
+                             "Coyote" = data %>% filter(Species == "Coyote"),
+                             "Fisher" = data %>% filter(Species == "Fisher"),
+                             "Raccoon" = data %>% filter(Species == "Raccoon"),
+                             "Red Squirrel" = data %>% filter(Species == "Red Squirrel"),
+                             "Gray Squirrel" = data %>% filter(Species == "Gray Squirrel"),
+                             "Black Bear" = data %>% filter(Species == "Black Bear"),
+                             "Red Fox" = data %>% filter(Species == "Red Fox"),
+                             "Porcupine" = data %>% filter(Species == "Porcupine"),
+                             "Bobcat" = data %>% filter(Species == "Bobcat"),
+                             "Weasel" = data %>% filter(Species == "Weasel"),
+                             "Striped Skunk" = data %>% filter(Species == "Striped Skunk"),
+                             "Flying Squirrel" = data %>% filter(Species == "Flying Squirrel"),
+                             "Snowshoe Hare" = data %>% filter(Species == "Snowshoe Hare"),
+                             "River Otter" = data %>% filter(Species == "River Otter"),
+                             "Mink" = data %>% filter(Species == "Mink"),
+                             "Other Small Mammal" = data %>% filter(Species == "Other Small Mammal"),
+                             "Opossum" = data %>% filter(Species == "Opposum"))
+      )
+      
+     p<-ggplot(study(), aes(Forest)) +
+        geom_histogram(stat = "count", position = "dodge", fill = '#165970', colour = '#543b1f') +
+        theme_bw() +
+        xlab("Forest") +
+        ylab("Number of Detections") +
+        theme(axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5)) +
+        labs(title = "Number of Species Detections per Forest") +
+        theme(plot.title = element_text(hjust=0.5))
+     ggplotly(p) %>% config(displayModeBar = F)
+      
+      
+      
+  })
   #Species Activity Patterns
   output$activity<-renderPlot({
     
-    title<- sprintf( "%s Activity Patterns", input$mammals) %>% lapply(htmltools::HTML)
+    if(input$rare){
+      Rare<-Activity %>% filter(bin == "MINK" | bin == "RIVEROTTER" |bin == "SNOWSHOEHARE" |bin == "SKUNKSTRIPED")
+      
+      ggplot(Rare, aes(x= truncHour, y = NumObs, fill = Species)) + 
+        geom_bar(stat = "identity",position= position_dodge(), width = 0.7) +
+        labs(title = "Number of Detections per Hour", x= "Time of Detection (hour)", y= "Number of Detections") +
+        theme (plot.title =element_text(hjust = 0.5),
+               axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5)) + 
+        scale_fill_manual(values = c("Mink" = "#165970",
+                                     "River Otter" = "#543b1f",
+                                     "Striped Skunk" = "#C6ABE1",
+                                     "Snowshoe Hare" = "#39541e")) 
+      
+      
+    }
     
+    else{
+      data<-switch(input$mammals, 
+                   "White-tailed Deer" = Activity %>% filter(bin == "DEERWHITETAILED"),
+                   "Chipmunk" = Activity %>% filter(bin == "CHIPMUNK"),
+                   "Cottontail Rabbit" = Activity %>% filter(bin == "COTTONTAILRABBIT"),
+                   "Coyote" = Activity %>% filter(bin == "COYOTE"),
+                   "Fisher" = Activity %>% filter(bin=="FISHER"),
+                   "Raccoon" = Activity %>% filter(bin =="RACCOON"),
+                   "Red Squirrel" = Activity %>% filter(bin == "SQUIRRELRED"),
+                   "Gray Squirrel" = Activity %>% filter(bin =="SQUIRRELGRAY"),
+                   "Black Bear" = Activity %>% filter(bin == "BLACKBEAR"),
+                   "Red Fox" = Activity %>% filter(bin == "FOXRED"),
+                   "Porcupine" = Activity %>% filter(bin == "PORCUPINE"),
+                   "Bobcat" = Activity %>% filter( bin == "BOBCAT"),
+                   "Weasel" = Activity %>% filter(bin == "WEASEL"),
+                   "Flying Squirrel" = Activity %>% filter(bin== "SQUIRRELFLYING"),
+                   "Other Small Mammal" = Activity %>% filter(bin == "OTHERSMALLMAMMAL"),
+                   "Opossum" = Activity %>% filter(bin == "OPOSSUM"))
+      
+      clock<-c(0:23)
+      clock24.plot(data$NumObs, clock, show.grid = T, lwd = 2, line.col = "blue", cex.lab = 0.5)
+      
+    }
     
-    data<-switch(input$mammals, 
-                 "White-tailed Deer" = Activity %>% filter(bin == "DEERWHITETAILED"),
-                 "Chipmunk" = Activity %>% filter(bin == "CHIPMUNK"),
-                 "Coyote" = Activity %>% filter(bin == "COYOTE"),
-                 "Fisher" = Activity %>% filter(bin=="FISHER"),
-                 "Raccoon" = Activity %>% filter(bin =="RACCOON"),
-                 "Red Squirrel" = Activity %>% filter(bin == "SQUIRRELRED"),
-                 "Gray Squirrel" = Activity %>% filter(bin =="SQUIRRELGRAY"),
-                 "Black Bear" = Activity %>% filter(bin == "BLACKBEAR"),
-                 "Red Fox" = Activity %>% filter(bin == "FOXRED"),
-                 "Porcupine" = Activity %>% filter(bin == "PORCUPINE"),
-                 "Bobcat" = Activity %>% filter( bin == "BOBCAT"),
-                 "Weasel" = Activity %>% filter(bin == "WEASEL"),
-                 "Striped Skunk" = Activity %>% filter(bin == "SKUNKSTRIPED"),
-                 "Flying Squirrel" = Activity %>% filter(bin== "SQUIRRELFLYING"),
-                 "Snowshoe Hare" = Activity %>% filter(bin == "SNOWSHOEHARE"),
-                 "River Otter" = Activity %>% filter(bin == "RIVEROTTER"),
-                 "Mink" = Activity %>% filter(bin == "MINK"),
-                 "Other Small Mammal" = Activity %>% filter(bin == "OTHERSMALLMAMMAL"),
-                 "Opossum" = Activity %>% filter(bin == "OPOSSUM"))
+  })
+  
+  output$image <- renderUI({    
     
-    clock<-c(0:23)
-    clock24.plot(data$NumObs, clock, show.grid = T, lwd = 2, line.col = "#165970", cex.lab = 0.5, main = title)
+    if(input$rare){
+      img(src = "Rare.png", height = 220, width = 600, align = "left")
+    }
+    
+    else if(input$mammals == "White-tailed Deer"){
+      img(src = "Deer.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Chipmunk"){
+      img(src = "Chipmunk.png", height = 240, width = 300, align = "left")
+    }
+    else if (input$mammals == "Cottontail Rabbit"){
+      img(src = "Cottontail.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Coyote"){
+      img(src = "Coyote.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Fisher"){
+      img(src = "Fisher.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Raccoon"){
+      img(src = "Raccoon.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Red Squirrel"){
+      img(src = "RedSquirrel.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Other Small Mammal"){
+      img(src = "Mole.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Gray Squirrel"){
+      img(src = "GraySquirrel.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Black Bear"){
+      img(src = "blackbear.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Red Fox"){
+      img(src = "RedFox.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Porcupine"){
+      img(src = "Porcupine.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Bobcat"){
+      img(src = "Bobcat.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Opossum"){
+      img(src = "Opossum.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Weasel"){
+      img(src = "Weasel.png", height = 240, width = 300, align = "left")
+    }
+    else if(input$mammals == "Flying Squirrel"){
+      img(src = "FlyingSquirrel.png", height = 240, width = 300, align = "left")
+    }
+    
     
   })
   
   
   
   #Species Trophic Levels
-  output$trophic <- renderPlot({
+  output$trophic <- renderPlotly({
     
     data<-switch(input$sites, 
                  "All Forests" = mammals,
@@ -403,11 +580,11 @@ server <- function(input, output){
                  "Degrasse" = mammals %>% filter(ForestName == "DEG"),
                  "Whippoorwill Corners" = mammals %>% filter(ForestName == "WHIP"),)
     
-    ggplot(data, aes(Trophic)) + 
+    p<-ggplot(data, aes(Diet)) + 
       geom_histogram(stat = "count", position = "dodge", fill = '#165970', colour = '#543b1f') + 
       labs(title = "Trophic Levels per Forest", x="Trophic Level", y="Number of Detections") +
       theme(axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5))+ theme(plot.title = element_text(hjust=0.5))
-    
+    ggplotly(p) %>% config(displayModeBar = F)
     
   })
   #Forest Composition
@@ -445,30 +622,32 @@ server <- function(input, output){
       )+
       labs(title="Forest Composition",
            fill = "Land Use Category")+ theme(plot.title = element_text(hjust=0.5))
+    
   
     
     
   })
   #Forest Diversity 
-  output$diversity <- renderPlot({
+  output$diversity <- renderPlotly({
     
     data<-switch(input$study, 
                  "All Forests" = divFinal,
-                 "South Hammond" = divFinal %>% filter(Forest == "SH"),
-                 "Beaver Creek" = divFinal %>% filter(Forest == "BC"),
-                 "Donnerville" = divFinal %>% filter(Forest == "DON"),
-                 "Degrasse" = divFinal %>% filter(Forest == "DEG"),
-                 "Whippoorwill Corners" = divFinal %>% filter(Forest == "WHIP"),
-                 "Whiskey Flats" = divFinal %>% filter(Forest == "WF"),)
+                 "South Hammond" = divFinal %>% filter(Forest_Code == "SH"),
+                 "Beaver Creek" = divFinal %>% filter(Forest_Code == "BC"),
+                 "Donnerville" = divFinal %>% filter(Forest_Code == "DON"),
+                 "Degrasse" = divFinal %>% filter(Forest_Code == "DEG"),
+                 "Whippoorwill Corners" = divFinal %>% filter(Forest_Code == "WHIP"),
+                 "Whiskey Flats" = divFinal %>% filter(Forest_Code == "WF"),)
     
-    ggplot(data, aes(x= Forest_Name, y = Index, fill = Diversity_Index)) + 
+    p<- ggplot(data, aes(x= Forest, y = Index, fill = Diversity)) + 
       geom_bar(stat = "identity",position= position_dodge(), width = 0.7) +
-      labs(title = "Diversity Indices per Forest", x= "Forest", y= "Diversity Index") +
+      labs(title = "Diversity Indices per Forest", x= "Forest", y= "Diversity Index", fill = "Diversity Index") +
      theme (plot.title =element_text(hjust = 0.5),
               axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5)) + 
       scale_fill_manual(values = c("Shannon Index" = "#165970",
-                                   "Inverse Simpson Index" = "#543b1f",
+                                   "Simpson Index" = "#543b1f",
                                    "Species Richness" = "#C6ABE1")) 
+    ggplotly(p) %>% config(displayModeBar = F)
     
   })
   
