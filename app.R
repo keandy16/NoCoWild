@@ -50,7 +50,34 @@ ui <- fluidPage(
   
   # App title ----
   titlePanel("North Country Wild Project"),
+  
   tabsetPanel(
+    #Intro tab
+    tabPanel("Introduction", fluid = TRUE,
+             sidebarLayout(
+               sidebarPanel(img(src = "NatureUpNorth.png", height = 100, width = 240),
+                            h6("Created by Kate Andy, 2020")),
+               
+             mainPanel(h4("Welcome to the North Country Wild Project! Our team set up camera traps
+             in 6 state forests in St. Lawrence County and collected data for over a year.
+             Our goal was to determine the mammal diversity in St. Lawrence County and compare diversity between deciduous and replanted 
+             pine forest types. As our climate changes, habitat that was once suitable for some mammals may no longer
+             be habitable. St. Lawrence County is situated within a proposed wildlife corridor
+             between the Adirondack State Park in New York State, United States and Algonquin Provincial
+             Park in Ontario, Canada (shown in the map below). Wildlife corridors are connected landscapes that allow species 
+             to move to larger reserves. If we can understand how mammals are 
+             using the forests in St. Lawrence County, we can select priority habitat to conserve in 
+             the proposed wildlife corridor. Thanks to volunteers who helped classify our photo data,
+             we have created interactive maps and graphs of our results. We hope this app will
+             show you what mammals are out there in St. Lawrence County and how these mammals are
+             using the available space. At the top of this page are tabs you 
+               can click on that will bring up a different interactive graphic. Let's get exploring!"),
+                       uiOutput("map")
+             )    
+             )
+    ),
+  
+
     #Map of Study Sites
     tabPanel("Map of Study Sites", fluid = TRUE,
              sidebarLayout(
@@ -78,15 +105,11 @@ ui <- fluidPage(
                                                     "White-tailed Deer"),
                                         selected = "All Mammals"),
                             
-                            img(src = "NatureUpNorth.png", height = 100, width = 240),
-                            h6("Created by Kate Andy, 2020")
+                            img(src = "NatureUpNorth.png", height = 100, width = 240)
                ),
                
-               mainPanel(h4("Welcome to the North Country Wild Project! The goal of this project is to 
-               show you what mammals are out there in St. Lawrence County. A the top of this page are tabs you 
-               can click on that will bring up a different interactive graphic. Let's get exploring!"),
                          
-                         h5("Use the map below to explore the state forests we sampled for this study in 2019. 
+                         mainPanel(h5("Use the map below to explore the state forests we sampled for this study in 2019. 
                             Select the mammal you want to learn about on the left and pan over the forests
                             (outlined in red) to see how many detections we were able to get."),
                          leafletOutput("speciesmap"))   
@@ -290,8 +313,15 @@ ui <- fluidPage(
 )
 
 
+
 server <- function(input, output){
   
+  #Introduction
+  output$map <- renderUI({
+  img(src = "StudySites.png", height = 400, width = 500)
+  })
+
+
   #Map of Study Sites
   output$speciesmap<-renderLeaflet({
     
@@ -520,8 +550,8 @@ server <- function(input, output){
         labs(title = "Number of Detections per Hour", x= "Time of Detection (hour)", y= "Number of Detections") +
         theme (plot.title =element_text(hjust = 0.5),
                axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5)) + 
-        scale_fill_manual(values = c("Mink" = "#165970",
-                                     "River Otter" = "#543b1f",
+        scale_fill_manual(values = c("Mink" = "#ABC4E0",
+                                     "River Otter" = "#d4b18a",
                                      "Striped Skunk" = "#C6ABE1",
                                      "Snowshoe Hare" = "#39541e")) 
       
