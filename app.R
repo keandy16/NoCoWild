@@ -58,13 +58,16 @@ ui <- fluidPage(
                sidebarPanel(img(src = "NatureUpNorth.png", height = 100, width = 240),
                             h6("Created by Kate Andy, 2020")),
                
-             mainPanel(h4("Welcome to the North Country Wild Project! Our team set up camera traps
-             in 6 state forests in St. Lawrence County and collected data for over a year.
+             mainPanel(h4("Welcome to the North Country Wild Project!"),
+             h5("Our team set up camera traps
+             in 6 state forests in St. Lawrence County and collected data from November, 2018 to March, 2020.
              Our goal was to determine the mammal diversity in St. Lawrence County and compare diversity between deciduous and replanted 
              pine forest types. As our climate changes, habitat that was once suitable for some mammals may no longer
              be habitable. St. Lawrence County is situated within a proposed wildlife corridor
              between the Adirondack State Park in New York State, United States and Algonquin Provincial
-             Park in Ontario, Canada (shown in the map below). Wildlife corridors are connected landscapes that allow species 
+             Park in Ontario, Canada (shown in the map below)."), 
+             br(),
+            h5("Wildlife corridors are connected landscapes that allow species 
              to move to larger reserves. If we can understand how mammals are 
              using the forests in St. Lawrence County, we can select priority habitat to conserve in 
              the proposed wildlife corridor. Thanks to volunteers who helped classify our photo data,
